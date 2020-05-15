@@ -33,6 +33,13 @@ adminset/install/server/server_install.sh
     客户端python版本支持2.6.6及以上
     说明：为保证注册IP是管理IP（后续会被ansible等调用），客户端的IP抓取目前使用主机名解析，否则报错。
     如：主机名为cn-bj-web01 请在/etc/hosts中加入相应的解析 192.168.x.x cn-bj-web01，这样再执行adminset_agent.py 可以保证正常运行。
+step0:	配置/etc/hosts域名解析
+    在两个节点都需要做域名解析配置
+```
+vim /etc/hosts
+172.21.13.253 node1
+172.21.13.211 node2
+```
 
 step1: 修改文件install/client/adminset_agent.py :
 ```
@@ -52,6 +59,15 @@ service adminsetd start|stop|restart|status
 ```
 注意：客户端全部功能需要配置服务器到客户端的ssh免密登录。
 
+step4: 服务端到客户端ssh免密登录
+```
+#配置node1：
+ssh-keygen		# 一直按回车，生成秘钥对
+ssh-copy-id -i root@node2    ##将公钥传至node2
+#配置node2:
+ssh-keygen		#一直按回车，生成秘钥对
+ssh-copy-id -i root@node1  ##将公钥传至node1
+```
 
 ## 访问
     关闭防火墙或开通80端口
